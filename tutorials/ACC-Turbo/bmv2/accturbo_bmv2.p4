@@ -2,44 +2,45 @@
 #include <core.p4>
 #include <v1model.p4>
 
-const bit<16> TYPE_IPV4 = 0x800;
+#define NUM_EGRESS_PORTS    512
+#define NUM_CLUSTERS        4
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
 
-typedef bit<9>  egressSpec_t;
-typedef bit<48> macAddr_t;
-typedef bit<32> ip4Addr_t;
-
-header ethernet_t {
-    macAddr_t dstAddr;
-    macAddr_t srcAddr;
-    bit<16>   etherType;
+header ethernet_h {
+    bit<48> dst_addr;
+    bit<48> src_addr;
+    bit<16> ether_type;
 }
 
-header ipv4_t {
-    bit<4>    version;
-    bit<4>    ihl;
-    bit<8>    diffserv;
-    bit<16>   totalLen;
-    bit<16>   identification;
-    bit<3>    flags;
-    bit<13>   fragOffset;
-    bit<8>    ttl;
-    bit<8>    protocol;
-    bit<16>   hdrChecksum;
-    ip4Addr_t srcAddr;
-    ip4Addr_t dstAddr;
+header ipv4_h {
+    bit<4>  version;
+    bit<4>  ihl;
+    bit<8>  diffserv;
+    bit<16> len;
+    bit<16> id;
+    bit<3>  flags;
+    bit<13> frag_offset;
+    bit<8>  ttl;
+    bit<8>  proto;
+    bit<16> hdr_checksum;
+    bit<32> src_addr;
+    bit<8> dst0;
+    bit<8> dst1;
+    bit<8> dst2;
+    bit<8> dst3;
 }
 
-struct metadata {
-    /* empty */
+header transport_h {
+    bit<16> sport;
+    bit<16> dport;
 }
 
-struct headers {
-    ethernet_t   ethernet;
-    ipv4_t       ipv4;
+header resubmit_h {
+    bit<8> cluster_id;
+    bit<8> update_activated;
 }
 
 /*************************************************************************
