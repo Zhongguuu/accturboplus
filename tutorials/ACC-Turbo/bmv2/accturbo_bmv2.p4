@@ -83,6 +83,50 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 /*************************************************************************
 **************  I N G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
+struct my_ingress_headers_t {
+    ethernet_h ethernet;
+    ipv4_h ipv4;
+    transport_h  transport;
+}
+
+/* All intermediate results that need to be available 
+ * to all P4-programmable components in ingress
+ */
+struct my_ingress_metadata_t { // We will have to initialize them
+    resubmit_h rs;
+
+    /* Cluster 1 */
+    bit<32> cluster1_dst0_distance;  
+    bit<32> cluster1_dst1_distance;
+    bit<32> cluster1_dst2_distance;
+    bit<32> cluster1_dst3_distance;
+
+    /* Cluster 2 */
+    bit<32> cluster2_dst0_distance;  
+    bit<32> cluster2_dst1_distance;
+    bit<32> cluster2_dst2_distance;
+    bit<32> cluster2_dst3_distance;
+
+    /* Cluster 3 */
+    bit<32> cluster3_dst0_distance;  
+    bit<32> cluster3_dst1_distance;
+    bit<32> cluster3_dst2_distance;
+    bit<32> cluster3_dst3_distance;
+
+    /* Cluster 4 */
+    bit<32> cluster4_dst0_distance;  
+    bit<32> cluster4_dst1_distance;
+    bit<32> cluster4_dst2_distance;
+    bit<32> cluster4_dst3_distance;
+
+    // Distance helpers
+    bit<32> min_d1_d2;
+    bit<32> min_d3_d4;
+    bit<32> min_d1_d2_d3_d4;
+    
+    // Initialization
+    bit<8> init_counter_value;
+}
 
 control MyIngress(inout headers hdr,
                   inout metadata meta,
