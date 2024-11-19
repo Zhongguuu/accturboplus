@@ -183,7 +183,7 @@ parser MyIngressParser(packet_in                pkt,
         transition accept;
     }
 }
-
+//TODO:搞明白ingress_intrinsic_metadata_t
 control MyIngress(
     inout my_ingress_headers_t                       hdr,
     inout my_ingress_metadata_t                      meta,
