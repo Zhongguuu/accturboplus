@@ -1071,10 +1071,13 @@ control MyIngress(
 
 
     /* Tables and actions to count the traffic of each cluster */
-    direct_counter(CounterType.bytes) bytes_counter;
+    register bit<32> bytes_counter;
 
     action bytes_count() {
-        bytes_counter.count();
+        bit<32> data;
+        bytes_counter.read(data);
+        data = data + 1;
+        bytes_counter.write(data);
     }
 
     table do_bytes_count {
@@ -1084,7 +1087,6 @@ control MyIngress(
         actions = { 
             bytes_count; 
         }
-        counters = bytes_counter;
         default_action = bytes_count();
         size = 32;
     }
@@ -1540,18 +1542,24 @@ control MyEgress(
 
 
     /* We measure throughput of benign and malicious traffic for evaluation */
-    direct_counter(CounterType.bytes) bytes_counter_malicious_egress;
-    direct_counter(CounterType.bytes) bytes_counter_benign_egress;
+    register<bit 32> bytes_counter_malicious_egress;
+    register<bit 32> bytes_counter_benign_egress;
 
     action bytes_count_malicious_egress() {
-         bytes_counter_malicious_egress.count();
+        bit <32> data;
+        bytes_counter_malicious_egress.read(data);
+        data = data + 1;
+        bytes_counter_malicious_egress.write(data);
     }
 
     action nop() {
     }
 
     action bytes_count_benign_egress() {
-         bytes_counter_benign_egress.count();
+        bit <32> data;
+        bytes_counter_benign_egress.read(data);
+        data = data + 1;
+        bytes_counter_benign_egress.write(data);
     }
 
     table do_bytes_count_malicious_egress {
@@ -1563,8 +1571,7 @@ control MyEgress(
             bytes_count_malicious_egress; 
             @defaultonly nop;
         }
-        counters = bytes_counter_malicious_egress;
-        const default_action = nop;
+        const default_action = bytes_count_malicious_egress;
         size = 1024;
     }
 
@@ -1575,7 +1582,6 @@ control MyEgress(
         actions = { 
             bytes_count_benign_egress; 
         }
-        counters = bytes_counter_benign_egress;
         const default_action = bytes_count_benign_egress;
         size = 1024;
     }
