@@ -1071,13 +1071,13 @@ control MyIngress(
 
 
     /* Tables and actions to count the traffic of each cluster */
-    register bit<32> bytes_counter;
+    register <bit<32>, PortId_t>(NUM_EGRESS_PORTS) bytes_counter;
 
     action bytes_count() {
         bit<32> data;
-        bytes_counter.read(data);
+        bytes_counter.read(data,0);
         data = data + 1;
-        bytes_counter.write(data);
+        bytes_counter.write(0,data);
     }
 
     table do_bytes_count {
@@ -1542,14 +1542,14 @@ control MyEgress(
 
 
     /* We measure throughput of benign and malicious traffic for evaluation */
-    register<bit 32> bytes_counter_malicious_egress;
-    register<bit 32> bytes_counter_benign_egress;
+    register <bit<32>, PortId_t>(NUM_EGRESS_PORTS) bytes_counter_malicious_egress;
+    register <bit<32>, PortId_t>(NUM_EGRESS_PORTS) bytes_counter_benign_egress;
 
     action bytes_count_malicious_egress() {
         bit <32> data;
-        bytes_counter_malicious_egress.read(data);
+        bytes_counter_malicious_egress.read(data,0);
         data = data + 1;
-        bytes_counter_malicious_egress.write(data);
+        bytes_counter_malicious_egress.write(0,data);
     }
 
     action nop() {
@@ -1557,9 +1557,9 @@ control MyEgress(
 
     action bytes_count_benign_egress() {
         bit <32> data;
-        bytes_counter_benign_egress.read(data);
+        bytes_counter_benign_egress.read(data,0);
         data = data + 1;
-        bytes_counter_benign_egress.write(data);
+        bytes_counter_benign_egress.write(0,data);
     }
 
     table do_bytes_count_malicious_egress {
